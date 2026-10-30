@@ -29,9 +29,9 @@ dataset_cls:
   dataset_func: data/generic.py
   dataset_name: ImageNet
   use_ratio: 0.01
-  classname_file: "data/classnames/imagenet.txt"
+  classname_file: "/path/to/imagenet/classnames.txt"
   args:
-    root: /path/to/imagenet  # contains train/ and val/
+    root: /path/to/imagenet/ # contains train/ and val/
     transform: null
     test: False
 
