@@ -1,0 +1,11 @@
+torch
+torchvision
+pytorch-ignite
+numpy
+pillow
+pyyaml
+tqdm
+scipy
+scikit-learn
+openai-clip
+open_clip_torch
