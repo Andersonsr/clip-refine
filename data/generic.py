@@ -98,8 +98,7 @@ class Flower(GenericDataset):
 
 class ImageNet(torchvision.datasets.ImageFolder):
 
-    def __init__(self, transform, test=False, **kwargs):
-        root = "/dataset/imagenet"
+    def __init__(self, transform, test=False, root="/dataset/imagenet", **kwargs):
         train = not test
         if train:
             split_data_dir = os.path.join(root, "train")

@@ -8,11 +8,6 @@ from pathlib import Path
 from PIL import Image
 from torch.utils.data import Dataset
 
-CONFIG = {
-    "train_img_dir": "./dataset/coco/train2017",
-    "train_annotation_file": "./dataset/coco/annotations/captions_train2017.json",
-}
-
 
 def read_json(fname):
     fname = Path(fname)
@@ -45,13 +40,11 @@ def get_img_id_to_captions(annotations):
 
 class COCOCaption(Dataset):
 
-    def __init__(self, tokenizer, transform, test=False):
+    def __init__(self, tokenizer, transform, test=False, root="./dataset/coco"):
 
         super().__init__()
 
-        self.config = CONFIG
-
-        annotation_file = self.config["train_annotation_file"]
+        annotation_file = os.path.join(root, "annotations/captions_train2017.json")
         annotations = read_json(annotation_file)
 
         self.img_id_to_filename = get_img_id_to_img_path(annotations)
@@ -60,7 +53,7 @@ class COCOCaption(Dataset):
 
         self.img_ids = list(self.img_id_to_filename.keys())
 
-        self.img_dir = self.config["train_img_dir"]
+        self.img_dir = os.path.join(root, "train2017")
 
         self.transform = transform
         self.tokenizer = tokenizer

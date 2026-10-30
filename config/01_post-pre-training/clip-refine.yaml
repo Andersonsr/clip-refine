@@ -19,6 +19,7 @@ dataset:
   dataset_func: data/coco_caption.py
   dataset_name: COCOCaption
   args:
+    root: /path/to/coco  # contains train2017/ and annotations/
     tokenizer: null
     transform: null
     test: False
@@ -29,6 +30,7 @@ dataset_cls:
   use_ratio: 0.01
   classname_file: "data/classnames/imagenet.txt"
   args:
+    root: /path/to/imagenet  # contains train/ and val/
     transform: null
     test: False
 
