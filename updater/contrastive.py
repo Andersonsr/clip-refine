@@ -8,8 +8,6 @@ import torch.distributions as dists
 import torch.nn.functional as F
 from ignite.utils import convert_tensor
 
-from loss.mmd import MMDLoss
-
 
 def distill(y_s, y_t, T=1.0, alpha=0.0):
     p_s = F.log_softmax(y_s / T, dim=1)

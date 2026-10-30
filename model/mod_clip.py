@@ -36,13 +36,14 @@ class CLIP(torch.nn.Module):
         backbone_name="ViT-B/32",
         feat_dim=2048,
         init_logit_scale=np.log(1 / 0.01),
+        freeze_logit_scale=False,
     ):
         super().__init__()
         # Load Backbone Vision-Language Model
         self.backbone, self.img_preprocess, self.tokenizer = load_model(backbone_name)
         self.feat_dim = feat_dim
         self.convert_models_to_fp32()
-        self.logit_scale = torch.nn.Parameter(torch.ones([]) * init_logit_scale)
+        self.logit_scale = torch.nn.Parameter(torch.ones([]) * init_logit_scale, requires_grad=not freeze_logit_scale)
 
     def convert_models_to_fp32(self):
         for p in self.parameters():

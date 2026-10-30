@@ -14,6 +14,7 @@ models:
     name: CLIP
     args:
       backbone_name: "ViT-B/32"
+      freeze_logit_scale: False
 
 dataset:
   dataset_func: data/coco_caption.py
