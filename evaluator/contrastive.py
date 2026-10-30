@@ -34,7 +34,7 @@ class ContrativeEvaluator:
         with torch.no_grad():
             out = self.model(images, texts.squeeze())
         feat_i, feat_t = out["image_features"], out["text_features"]
-        contrastive_loss = self.loss(feat_i, feat_t, out["logit_scale"])
+        contrastive_loss = self.loss(feat_i, feat_t, out["logit_scale"].mean())  # DataParallel gathers one copy per GPU
         feat_gap = F.pairwise_distance(feat_i, feat_t).mean()
         alignment_loss = align(feat_t, feat_i)
         uniformity_loss = uniformity(torch.cat([feat_i, feat_t], dim=0))

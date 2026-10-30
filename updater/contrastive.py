@@ -122,7 +122,7 @@ class CLIPUpdater:
 
         out = self.model(images, texts.squeeze())
         feat_i, feat_t = out["image_features"], out["text_features"]
-        contrastive_loss = self.clip_loss(feat_i, feat_t, out["logit_scale"])
+        contrastive_loss = self.clip_loss(feat_i, feat_t, out["logit_scale"].mean())  # DataParallel gathers one copy per GPU
         total_loss = self.lambda_cont * contrastive_loss
 
         if self.teacher:
@@ -209,7 +209,7 @@ class RandRegUpdater(CLIPUpdater):
         images, texts = self.get_batch(batch, device=self.device)
         out = self.model(images, texts.squeeze())
         feat_i, feat_t = out["image_features"], out["text_features"]
-        contrastive_loss = self.clip_loss(feat_i, feat_t, out["logit_scale"])
+        contrastive_loss = self.clip_loss(feat_i, feat_t, out["logit_scale"].mean())  # DataParallel gathers one copy per GPU
         loss_main = self.lambda_cont * contrastive_loss
         if self.share_random_feat:
             feat_ip = feat_tp = self.generate_random_feature(feat_i.size())
