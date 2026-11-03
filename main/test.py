@@ -61,6 +61,10 @@ def main(config):
         logger.info("### Loading target dataset")
         config_target["dataset_cls"]["args"]["transform"] = model.img_preprocess
         config_target["dataset_cls"]["args"]["tokenizer"] = model.tokenizer
+        if "root" in config_target["dataset_cls"]["args"]:
+            config_target["dataset_cls"]["args"]["root"] = os.path.join(
+                config["data_root"], config_target["dataset_cls"]["args"]["root"]
+            )
         config_target["batchsize"] = config["eval_batchsize"]
         config_target["num_worker"] = config["num_worker"]
         test_loader = setup_test_dataloader(config_target)
@@ -83,6 +87,9 @@ def run():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config_path", type=str, default="configs/base.yml", help="path to config file")
     parser.add_argument("--results_dir", type=str, default="./result", help="directory to save the results to")
+    parser.add_argument(
+        "--data_root", type=str, required=True, help="folder given to vlm-tuning's download_datasets.sh --data"
+    )
     parser.add_argument("--resume", type=str, default="", help="path to the snapshot")
     parser.add_argument("--eval_batchsize", type=int, default=512, help="batchsize for evaluation")
     parser.add_argument("--num_worker", type=int, default=16)
