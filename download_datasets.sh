@@ -254,6 +254,9 @@ imagenet() {
     if [ -n "${IMAGENET_DIR:-}" ]; then
         for split in train val; do
             [ -d "$IMAGENET_DIR/$split" ] || { log "  no $IMAGENET_DIR/$split"; return 1; }
+            # e.g. the Kaggle copy's ILSVRC/Data/CLS-LOC/val is flat (its classes are in LOC_val_solution.csv)
+            [ "$(find "$IMAGENET_DIR/$split/" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 1000 ] ||
+                { log "  $IMAGENET_DIR/$split does not have 1,000 class folders"; return 1; }
             ln -sfn "$(cd "$IMAGENET_DIR/$split" && pwd)" "$d/images/$split"
         done
         log "  linked $IMAGENET_DIR/{train,val} into $d/images"
@@ -382,7 +385,8 @@ sys.exit(0 if len(classes) == 1000 else 1)
 EOF
         done_archive "$DL/imagenet-val.part"
     fi
-    [ -d "$d/images/val" ]
+    [ "$(find -L "$d/images/val/" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 1000 ] ||
+        { log "  $d/images/val does not have 1,000 class folders"; return 1; }
 }
 
 imagenetv2() {
