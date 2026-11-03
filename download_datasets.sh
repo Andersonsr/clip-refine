@@ -77,10 +77,13 @@ gfetch() {
 
 extract() {  # extract ARCHIVE DIR
     log "  extracting $(basename "$1")"
-    case "$1" in
+    if ! case "$1" in
         *.zip) unzip -q -o "$1" -d "$2" ;;
         *) tar -xf "$1" -C "$2" ;;
-    esac
+    esac; then  # a broken download (e.g. an error page saved under the archive's name): fetched again on a re-run
+        log "  $(basename "$1") is not a valid archive ($(head -c 100 "$1" | tr -cd '[:print:]' | cut -c1-60)): deleted"
+        rm -f "$1" "$1.ok"; return 1
+    fi
 }
 
 done_archive() { [ "${KEEP_ARCHIVES:-0}" = 1 ] || rm -f "$1" "$1.ok"; }
