@@ -55,11 +55,18 @@ log() { echo "[$(date +%H:%M:%S)] $*"; }
 fetch() {
     local out="$DL/$1"; shift
     [ -f "$out.ok" ] && { log "  have $(basename "$out")"; return 0; }
+    local before
     for url in "$@"; do
         log "  downloading $url"
-        if curl $([ -t 2 ] && echo -# || echo -sS) -L --fail --connect-timeout 30 --retry 3 --retry-delay 5 -C - -o "$out" "$url"; then
-            touch "$out.ok"; return 0
-        fi
+        while true; do
+            before=$(stat -c %s "$out" 2>/dev/null || echo 0)
+            if curl $([ -t 2 ] && echo -# || echo -sS) -L --fail --connect-timeout 30 --retry 3 --retry-delay 5 -C - -o "$out" "$url"; then
+                touch "$out.ok"; return 0
+            fi
+            # a connection dropped mid-transfer (which --retry does not cover): resume while the download progresses
+            [ "$(stat -c %s "$out" 2>/dev/null || echo 0)" -gt "$before" ] || break
+            log "  interrupted at $(( $(stat -c %s "$out") / 1000000 )) MB, resuming"; sleep 5
+        done
         rm -f "$out"
         log "  failed: $url"
     done
@@ -154,8 +161,13 @@ flowers102() {
 }
 
 food101() {
-    fetch food-101.tar.gz http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz
-    extract "$DL/food-101.tar.gz" "$DATA"; done_archive "$DL/food-101.tar.gz"
+    if fetch food-101.tar.gz http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz && extract "$DL/food-101.tar.gz" "$DATA"; then
+        done_archive "$DL/food-101.tar.gz"
+    else  # behind some proxies ETH answers with a web page: a Kaggle copy has the same images/ (5.7 GB, no account)
+        fetch food41.zip https://www.kaggle.com/api/v1/datasets/download/kmader/food41
+        log "  extracting food41.zip (images/ and meta/, not the .h5 files)"
+        mkdir -p "$DATA/food-101"; unzip -q -o "$DL/food41.zip" -x '*.h5' -d "$DATA/food-101"; done_archive "$DL/food41.zip"
+    fi
     gfetch "$DATA/food-101/split_zhou_Food101.json" 1QK0tGi096I0Ba6kggatX1ee6dJFIcEJl
     [ -d "$DATA/food-101/images" ]
 }
