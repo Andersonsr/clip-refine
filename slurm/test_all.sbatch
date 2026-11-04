@@ -16,13 +16,12 @@
 #SBATCH --output=logs/clip-refine-%x-%j.out
 ##SBATCH --partition=tc
 
-export HTTP_PROXY=http://$USER:$PASSWORD@${PROXY_HOST}
-export HTTPS_PROXY=http://$USER:$PASSWORD@${PROXY_HOST}
-export NO_PROXY="127.0.0.1, localhost, example.com"
-
 set -eo pipefail
 . ~/.bashrc
 conda activate cap
+# proxy host and NO_PROXY are set in the cap env (conda env config vars); USER and PASSWORD come from the submit shell
+export HTTP_PROXY=http://$USER:$PASSWORD@${PROXY_HOST:?set PROXY_HOST in the cap env}
+export HTTPS_PROXY=$HTTP_PROXY
 export TOKENIZERS_PARALLELISM=false
 export PYTHONUNBUFFERED=1
 set -u

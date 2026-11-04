@@ -218,9 +218,18 @@ def run():
     parser.add_argument("--backend", type=str, default="nccl")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--evaluate", action="store_true")
+    parser.add_argument("--dataset_root", type=str, default=None, help="overrides dataset.args.root of the config")
+    parser.add_argument("--imagenet_root", type=str, default=None, help="overrides dataset_cls.args.root")
+    parser.add_argument("--classname_file", type=str, default=None, help="overrides dataset_cls.classname_file")
 
     args = parser.parse_args()
     config = yaml_utils.Config(yaml.load(open(args.config_path), Loader=yaml.SafeLoader))
+    if args.dataset_root is not None:
+        config["dataset"]["args"]["root"] = args.dataset_root
+    if args.imagenet_root is not None:
+        config["dataset_cls"]["args"]["root"] = args.imagenet_root
+    if args.classname_file is not None:
+        config["dataset_cls"]["classname_file"] = args.classname_file
     config.config_dict["pattern"] = yaml_utils.make_pattern(config)
     config.config_dict.update(vars(args))
     main(config.config_dict)

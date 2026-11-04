@@ -31,7 +31,7 @@ dataset_cls:
   use_ratio: 0.01
   classname_file: "/path/to/imagenet/classnames.txt"
   args:
-    root: /path/to/imagenet/ # contains train/ and val/
+    root: /path/to/imagenet # contains train/ and val/
     transform: null
     test: False
 
