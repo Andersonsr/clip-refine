@@ -42,6 +42,7 @@ def compute_statistics(model, dataset, num_samples=10000, batch_size=256, num_wo
     """
     Similarities of the model's normalized image and text embeddings over num_samples random samples of dataset:
     positives are the matched pairs, negatives every image with the texts of the other samples.
+    The similarity matrix takes about 45 bytes per pair at its peak: up to about 40,000 samples on an 80 GB GPU.
 
     Returns {"mu_p", "sigma_p", "mu_n", "sigma_n", "num_samples"} (medians and sigma_MAD).
     """
@@ -66,7 +67,7 @@ def main():
     parser.add_argument("--root", required=True, help="dataset folder (coco: train2017/ and annotations/; cc3m: shards)")
     parser.add_argument("--num_samples", type=int, default=10000, help="training samples the statistics come from")
     parser.add_argument("--n1", type=int, default=32768, help="batch size of the pre-training (32,768 for OpenAI CLIP)")
-    parser.add_argument("--batch_size", type=int, default=256, help="batch size for computing the embeddings")
+    parser.add_argument("--batch_size", type=int, default=512, help="batch size for computing the embeddings")
     parser.add_argument("--num_worker", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
