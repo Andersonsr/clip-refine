@@ -1,7 +1,7 @@
 #!/bin/bash
 # COCO 2017 download (util/download_coco.py), CPU only. Submit from the clip-refine root:
-#   OUT=/path/to/coco sbatch slurm/download_coco.sbatch
-#   OUT=/path/to/coco PARTS="train annotations" sbatch slurm/download_coco.sbatch --keep-zips
+#   sbatch slurm/download_coco.sbatch                     # into OUT, default $CLUSTER_HOME/data/dataset/coco
+#   PARTS="train annotations" sbatch slurm/download_coco.sbatch --keep-zips
 # PARTS (default "train val annotations") picks what to download; extra arguments go to download_coco.py.
 # Submitting again with the same OUT skips the parts already extracted. A download cut short restarts from zero,
 # and a part whose extraction was cut short must have its folder (train2017/, val2017/, annotations/) deleted first.
@@ -24,7 +24,7 @@ export HTTPS_PROXY=$HTTP_PROXY
 export PYTHONUNBUFFERED=1
 set -u
 
-OUT=${OUT:?set OUT to the destination folder}
+OUT=${OUT:-${CLUSTER_HOME:?set CLUSTER_HOME in the cap env}/data/dataset/coco}
 PARTS=${PARTS:-train val annotations}
 
 mkdir -p logs "$OUT"

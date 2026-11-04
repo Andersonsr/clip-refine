@@ -1,9 +1,9 @@
 #!/bin/bash
 # Zero-shot classification on every dataset of main/experimental_settings.py with main/test.py. Submit from the
 # clip-refine root with the config and --experiment_id (and --results_dir, if changed) of the training run:
-#   DATA_ROOT=/path/to/DATA sbatch slurm/test.sbatch
-#   DATA_ROOT=/path/to/DATA CONFIG=config/01_post-pre-training/contrastive.yaml sbatch slurm/test.sbatch --experiment_id 1
-# DATA_ROOT is the folder given to download_datasets.sh --data; CONFIG (default
+#   sbatch slurm/test.sbatch
+#   CONFIG=config/01_post-pre-training/contrastive.yaml sbatch slurm/test.sbatch --experiment_id 1
+# DATA_ROOT (default $CLUSTER_HOME/data/dataset, the datasets home) is the folder given to download_datasets.sh --data; CONFIG (default
 # config/01_post-pre-training/clip-refine.yaml) picks the config; extra arguments go to test.py.
 # test.py loads <results_dir>/<pattern>/experiment<id>/best_model*.pt (the config's pre-trained model if there is none)
 # and writes test_result.json next to it. It runs on a single GPU.
@@ -29,7 +29,7 @@ export PYTHONUNBUFFERED=1
 set -u
 
 CONFIG=${CONFIG:-config/01_post-pre-training/clip-refine.yaml}
-DATA_ROOT=${DATA_ROOT:?set DATA_ROOT to the folder given to download_datasets.sh --data}
+DATA_ROOT=${DATA_ROOT:-${CLUSTER_HOME:?set CLUSTER_HOME in the cap env}/data/dataset}   # datasets home (the folder given to download_datasets.sh --data)
 
 mkdir -p logs
 echo "$(date) job $SLURM_JOB_ID config=$CONFIG data=$DATA_ROOT gpus=${CUDA_VISIBLE_DEVICES:-none}"

@@ -1,9 +1,9 @@
 #!/bin/bash
 # Logit scale estimation (estimate_logit_scale.py): similarity statistics of the training data, then T2 for the
 # config's batch size, added to estimated_logit_scale.json in the clip-refine root. Submit from the clip-refine root:
-#   DATASET=coco ROOT=/path/to/coco sbatch slurm/estimate_logit_scale.sbatch
-#   DATASET=cc3m ROOT=/path/to/cc3m sbatch slurm/estimate_logit_scale.sbatch --num_samples 20000
-# DATASET is coco or cc3m; ROOT the dataset folder (coco: train2017/ and annotations/; cc3m: the shards); CONFIG
+#   DATASET=coco sbatch slurm/estimate_logit_scale.sbatch
+#   DATASET=cc3m sbatch slurm/estimate_logit_scale.sbatch --num_samples 20000
+# DATASET is coco or cc3m; ROOT (default $CLUSTER_HOME/data/dataset/<DATASET>) the dataset folder (coco: train2017/ and annotations/; cc3m: the shards); CONFIG
 # (default clip-refine.yaml for coco, clip-refine-cc3m.yaml for cc3m) gives the model and the batch size; extra
 # arguments go to estimate_logit_scale.py.
 #SBATCH --job-name=logit-scale
@@ -27,7 +27,7 @@ export PYTHONUNBUFFERED=1
 set -u
 
 DATASET=${DATASET:?set DATASET to coco or cc3m}
-ROOT=${ROOT:?set ROOT to the dataset folder}
+ROOT=${ROOT:-${CLUSTER_HOME:?set CLUSTER_HOME in the cap env}/data/dataset/$DATASET}   # coco or cc3m folder of the datasets home
 case "$DATASET" in
     coco) CONFIG=${CONFIG:-config/01_post-pre-training/clip-refine.yaml} ;;
     cc3m) CONFIG=${CONFIG:-config/01_post-pre-training/clip-refine-cc3m.yaml} ;;

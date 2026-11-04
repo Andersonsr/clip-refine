@@ -40,4 +40,4 @@ echo "$(date) job $SLURM_JOB_ID index=$INDEX results=$RESULTS_DIR first id=$FIRS
 
 srun python train_estimated_logit_scale.py --index "$INDEX" --results_dir "$RESULTS_DIR" \
     --first_experiment_id "$FIRST_ID" --num_worker "$SLURM_CPUS_PER_TASK" \
-    --dataset_root "$DATASET_ROOT" --imagenet_root "$IMAGENET_ROOT" --classname_file "$IMAGENET_ROOT/classnames.txt" "$@"
+    --dataset_root "$DATASET_ROOT" --imagenet_root "$IMAGENET_ROOT" "$@"

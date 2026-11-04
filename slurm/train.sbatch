@@ -36,4 +36,4 @@ mkdir -p logs
 echo "$(date) job $SLURM_JOB_ID config=$CONFIG dataset=$DATASET_ROOT imagenet=$IMAGENET_ROOT gpus=${CUDA_VISIBLE_DEVICES:-none}"
 
 srun python main/train.py --config_path "$CONFIG" --num_worker "$SLURM_CPUS_PER_TASK" \
-    --dataset_root "$DATASET_ROOT" --imagenet_root "$IMAGENET_ROOT" --classname_file "$IMAGENET_ROOT/classnames.txt" "$@"
+    --dataset_root "$DATASET_ROOT" --imagenet_root "$IMAGENET_ROOT" "$@"

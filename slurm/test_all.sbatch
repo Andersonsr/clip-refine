@@ -1,9 +1,9 @@
 #!/bin/bash
 # Zero-shot evaluation of every trained experiment in RESULTS_DIR (test_all.py), one after the other, each with the
 # config saved in its experiment folder. Submit from the clip-refine root:
-#   RESULTS_DIR=/path/to/results DATA_ROOT=/path/to/DATA sbatch slurm/test_all.sbatch
-#   RESULTS_DIR=/path/to/results DATA_ROOT=/path/to/DATA sbatch slurm/test_all.sbatch --overwrite
-# DATA_ROOT is the folder given to download_datasets.sh --data. Experiments that already have a test_result.json are
+#   RESULTS_DIR=/path/to/results sbatch slurm/test_all.sbatch
+#   RESULTS_DIR=/path/to/results sbatch slurm/test_all.sbatch --overwrite
+# DATA_ROOT (default $CLUSTER_HOME/data/dataset) is the folder given to download_datasets.sh --data. Experiments that already have a test_result.json are
 # skipped (--overwrite evaluates them again); other extra arguments go to main/test.py.
 #SBATCH --job-name=clip-refine-test-all
 #SBATCH --nodes=1
@@ -27,7 +27,7 @@ export PYTHONUNBUFFERED=1
 set -u
 
 RESULTS_DIR=${RESULTS_DIR:?set RESULTS_DIR to the folder the experiments were saved in}
-DATA_ROOT=${DATA_ROOT:?set DATA_ROOT to the folder given to download_datasets.sh --data}
+DATA_ROOT=${DATA_ROOT:-${CLUSTER_HOME:?set CLUSTER_HOME in the cap env}/data/dataset}   # datasets home (the folder given to download_datasets.sh --data)
 
 mkdir -p logs
 echo "$(date) job $SLURM_JOB_ID results=$RESULTS_DIR data=$DATA_ROOT gpus=${CUDA_VISIBLE_DEVICES:-none}"
