@@ -1,3 +1,5 @@
 CLAUDE.md
 __pycache__/
 .vscode/
+clip_refine.json
+estimated_logit_scale.json
